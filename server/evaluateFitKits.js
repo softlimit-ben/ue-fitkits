@@ -3,25 +3,20 @@ import openOrder from "./orders/openOrder";
 import updateFitKits from "./orders/updateFitKits";
 import closeOrder from "./orders/closeOrder";
 
-const low = require('lowdb');
-const FileSync = require('lowdb/adapters/FileSync');
-const adapter = new FileSync('db.json');
-const db = low(adapter);
 
 const FitKitsNotNeeded = () => {
   let err = new Error();
   err.name = 'FitKitsNotNeeded';
   return err;
 };
-
-const evaluateFitKits = function(ctx, accessToken){
+//34196982693947
+const evaluateFitKits = function(ctx, accessToken, shopData){
     let webhook = ctx.state.webhook;
     let orderId = webhook.payload.admin_graphql_api_id;
     let shop = webhook.domain;
 
-    const FITKIT_ID = db.get('shops')
-      .find({ id: shop })
-      .value().fitkit;
+    //GET FITKIT ID FROM SHOP
+    const FITKIT_ID = `gid://shopify/ProductVariant/${shopData.fitkit}`;
 
     //get original order to check FitKit quantity
     let order = getOrder(orderId, accessToken, shop);

@@ -9,13 +9,15 @@ import Router from "koa-router";
 import session from "koa-session";
 const { receiveWebhook, registerWebhook } = require('@shopify/koa-shopify-webhooks');
 
-const low = require('lowdb')
-const FileSync = require('lowdb/adapters/FileSync')
-const adapter = new FileSync('db.json')
-const db = low(adapter)
+import setupTable from '../db/setupTable';
+import getShop from '../db/getShop';
+import insertShop from '../db/insertShop';
 
-db.defaults({ shops: [] })
-  .write()
+//initialize DB table if empty
+setupTable().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
 
 import evaluateFitKits from './evaluateFitKits';
 
@@ -53,9 +55,11 @@ app.prepare().then(() => {
 
         // Add the token
         console.log('SAVE TO JSON DB', shop, accessToken)
-        db.get('shops')
-          .push({ id: shop, token: accessToken })
-          .write();
+
+        insertShop(shop, accessToken).catch((err) => {
+          console.error(err);
+          process.exit(1);
+        });
 
         const registration = await registerWebhook({
           address: `${HOST}/webhooks/orders/create`,
@@ -79,11 +83,13 @@ app.prepare().then(() => {
   const webhook = receiveWebhook({ secret: SHOPIFY_API_SECRET });
 
   router.post('/webhooks/orders/create', webhook, (ctx) => {
-    let accessToken = db.get('shops')
-      .find({ id: ctx.state.webhook.domain})
-      .value().token;
-    accessToken ? evaluateFitKits(ctx, accessToken): null;
+    let shop = getShop(ctx.state.webhook.domain);
+    shop.then( shopData => {
+      let accessToken = shopData.token;
+      accessToken ? evaluateFitKits(ctx, accessToken, shopData): null;
+    })
   });
+
 
   server.use(
     graphQLProxy({

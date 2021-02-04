@@ -16,6 +16,7 @@ const client = new ApolloClient({
 class MyApp extends App {
   render() {
     const { Component, pageProps, shopOrigin } = this.props;
+    const shortShop = shopOrigin ? shopOrigin.slice(0,shopOrigin.indexOf('.')) : null;
     return (
       <AppProvider i18n={translations}>
         <Provider
@@ -26,7 +27,7 @@ class MyApp extends App {
           }}
         >
           <ApolloProvider client={client}>
-            <Component {...pageProps} />
+            <Component {...pageProps} shop={shortShop} />
           </ApolloProvider>
         </Provider>
       </AppProvider>
