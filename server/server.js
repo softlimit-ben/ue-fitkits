@@ -54,7 +54,7 @@ app.prepare().then(() => {
         const { shop, accessToken } = ctx.session;
 
         // Add the token
-        console.log('SAVE TO JSON DB', shop, accessToken)
+        // console.log('SAVE TO JSON DB', shop, accessToken)
 
         insertShop(shop, accessToken).catch((err) => {
           console.error(err);
