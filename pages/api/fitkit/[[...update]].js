@@ -11,7 +11,7 @@ export default async function(req, res) {
         res.statusCode = 200
         res.setHeader('Content-Type', 'application/json');
         res.setHeader('Cache-Control', 'max-age=180000');
-        console.log(response.fitkit);
+        // console.log(response.fitkit);
         res.end(JSON.stringify(response.fitkit))
         resolve();
       })

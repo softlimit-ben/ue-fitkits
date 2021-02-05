@@ -51,7 +51,7 @@ class Index extends React.Component {
       fitkitId: this.state.fitkitId
     });
     const data = {id: this.state.fitkitId, shop: this.props.shop};
-    console.log('submission',data);
+    // console.log('submission',data);
     fetch(`/api/fitkit/${this.props.shop}/${data.id}`,{
       headers: {
       'Content-Type': 'application/json'
