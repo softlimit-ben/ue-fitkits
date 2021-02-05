@@ -31,8 +31,9 @@ const evaluateFitKits = function(ctx, accessToken, shopData){
           type == 'Monitor' || type == 'Monitor-Hidden' ? monitorQty += quantity : null;
       })
 
-      needsFitKits = monitorQty - fitKitExisting;
-
+      needsFitKits = monitorQty;
+      //block us from continuing if there are any fitkits in the order
+      fitKitExisting > 0 ? needsFitKits = 0 : null;
       //break if no fitkits needed
       if(needsFitKits == 0) throw FitKitsNotNeeded();
       return needsFitKits;
