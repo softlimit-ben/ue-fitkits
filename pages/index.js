@@ -2,7 +2,8 @@ import { Button, Card, Form, FormLayout, Layout, Page, Stack, TextField, } from 
 
 class Index extends React.Component {
   state = {
-    fitkitId: ''
+    fitkitId: '',
+    saved: ''
   }
   componentDidMount() {
     // get existing Fitkit ID from DB
@@ -25,10 +26,12 @@ class Index extends React.Component {
                 <FormLayout>
                   <TextField
                     placeholder={this.state.fitkitId}
+                    value={this.state.fitkitId}
                     onChange={this.handleChange.bind(this)}
                     label="FitKit Variant ID"
                     type="text"
                   />
+                  <p>{this.state.saved}</p>
                   <Stack distribution="trailing">
                     <Button primary submit>
                       Save
@@ -55,7 +58,14 @@ class Index extends React.Component {
       }
     })
     .then( res => res.json())
-    .then( data => console.log(data) );
+    .then( data => {
+      this.setState({
+        saved: 'Saved'
+      });
+      let _this = this;
+      //remove saved note after 3 seconds
+      setTimeout(function(){ _this.setState({ saved: '' })}, 3000);
+    } );
 
   };
 
