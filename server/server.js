@@ -83,6 +83,8 @@ app.prepare().then(() => {
   const webhook = receiveWebhook({ secret: SHOPIFY_API_SECRET });
 
   router.post('/webhooks/orders/create', webhook, (ctx) => {
+    //RUN THE FITKIT PROCESSING ONLY IF THIS IS A WEB ORDER (ie created from a checkout)
+    if(ctx.state.webhook.payload.source_name == 'shopify_draft_order') return;
     let shop = getShop(ctx.state.webhook.domain);
     shop.then( shopData => {
       let accessToken = shopData.token;
