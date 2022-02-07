@@ -21,7 +21,7 @@ const query = `
 
 const getOrder = async function(id, accessToken, shop){
   console.log('GETORDER',id);
-  const response = await fetch(`https://${shop}/admin/api/2020-07/graphql.json`, {
+  const response = await fetch(`https://${shop}/admin/api/2022-01/graphql.json`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

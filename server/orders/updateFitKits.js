@@ -20,7 +20,7 @@ const updateFitKits = async (ctx, accessToken, shop) => {
   const variantId = ctx.variantId;
   const quantity = ctx.quantity;
   console.log('ADDFITKITS', id, variantId, quantity);
-  const response = await fetch(`https://${shop}/admin/api/2020-07/graphql.json`, {
+  const response = await fetch(`https://${shop}/admin/api/2022-01/graphql.json`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
