@@ -2,7 +2,7 @@ import getOrder from "./orders/getOrder";
 import openOrder from "./orders/openOrder";
 import updateFitKits from "./orders/updateFitKits";
 import closeOrder from "./orders/closeOrder";
-
+import releaseHold from "./orders/releaseHold";
 
 const FitKitsNotNeeded = () => {
   let err = new Error();
@@ -19,9 +19,9 @@ const evaluateFitKits = function(ctx, accessToken, shopData){
     const FITKIT_ID = `gid://shopify/ProductVariant/${shopData.fitkit}`;
 
     //get original order to check FitKit quantity
-    let order = getOrder(orderId, accessToken, shop);
     let needsFitKits = 0;
-    order.then( res => {
+    getOrder(orderId, accessToken, shop)
+    .then( res => {
       let monitorQty = 0;
       let fitKitExisting = 0;
       res.data.order.lineItems.edges.forEach( item => {
@@ -51,6 +51,18 @@ const evaluateFitKits = function(ctx, accessToken, shopData){
       //close order
       let updatedOrder = res.data.orderEditAddVariant.calculatedOrder.id;
       return closeOrder(updatedOrder, accessToken, shop);
+    })
+    .then( res => {
+      // re-check order for 'ON_HOLD' fulfillments and release them...
+      // issue where sometimes added fitkits are 'ON_HOLD' and cannot be fulfilled through the dashboard
+      getOrder(orderId, accessToken, shop)
+      .then(res => {
+        res.data.order.fulfillmentOrders.edges.forEach( edge => {
+          if(edge.node.status !== 'ON_HOLD') return
+          // release HOLD fulfillmentOrders
+          releaseHold(edge.node.id, accessToken, shop)
+        })
+      })
     })
     .then( res => {
       return res;

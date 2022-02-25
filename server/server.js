@@ -85,13 +85,11 @@ app.prepare().then(() => {
   router.post('/webhooks/orders/create', webhook, (ctx) => {
     //RUN THE FITKIT PROCESSING ONLY IF THIS IS A WEB ORDER (ie created from a checkout)
     if(ctx.state.webhook.payload.source_name == 'shopify_draft_order') return;
-    let shop = getShop(ctx.state.webhook.domain);
-    shop.then( shopData => {
-      let accessToken = shopData.token;
-      accessToken ? evaluateFitKits(ctx, accessToken, shopData): null;
+    getShop(ctx.state.webhook.domain)
+    .then( shopData => {
+      shopData.token ? evaluateFitKits(ctx, shopData.token, shopData): null;
     })
   });
-
 
   server.use(
     graphQLProxy({

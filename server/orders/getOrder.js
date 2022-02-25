@@ -15,6 +15,14 @@ const query = `
           }
         }
       }
+      fulfillmentOrders(first:50) {
+        edges {
+          node {
+            id
+            status
+          }
+        }
+      }
     }
   }
 `;
